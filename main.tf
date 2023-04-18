@@ -29,10 +29,11 @@ resource "aws_instance" "web" {
   }
 }
 
-resource "aws_security_group" "blog"{
-  name        = "blog"
-  description = "Allow http/https in. Allow everything out."
-
+resource "aws_security_group" "blog" {
+  name = "blog"
+  tags = {
+    Terraform = "true"
+  }
   vpc_id = data.aws_vpc.default.id
 }
 
@@ -42,9 +43,9 @@ resource "aws_security_group_rule" "blog_http_in" {
   to_port     = 80
   protocol    = "tcp"
   cidr_blocks = ["0.0.0.0/0"]
-
-  security_group.id = aws_security_group.blog.id
+  security_group_id = aws_security_group.blog.id
 }
+
 
 resource "aws_security_group_rule" "blog_https_in" {
   type        = "ingress"
@@ -52,16 +53,15 @@ resource "aws_security_group_rule" "blog_https_in" {
   to_port     = 443
   protocol    = "tcp"
   cidr_blocks = ["0.0.0.0/0"]
-
-  security_group.id = aws_security_group.blog.id
+  security_group_id = aws_security_group.blog.id
 }
 
-resource "aws_security_group_rule" "blog_everythin_out" {
+
+resource "aws_security_group_rule" "blog_everything_out" {
   type        = "egress"
   from_port   = 0
   to_port     = 0
   protocol    = "-1"
   cidr_blocks = ["0.0.0.0/0"]
-
-  security_group.id = aws_security_group.blog.id
+  security_group_id = aws_security_group.blog.id
 }
